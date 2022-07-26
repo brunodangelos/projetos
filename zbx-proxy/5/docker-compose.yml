@@ -2,15 +2,15 @@ version: "4.0"
 services:
     zabbix-proxy-v4:
         image: dockerglobalcare/globalcare:v4
-        container_name: bp-aws.docker.prx.v.globalcare
-        hostname: bp-aws.docker.prx.v.globalcare
+        container_name: proxy
+        hostname: proxy
         ports:
             - 10051:10051
         cap_add: ['NET_ADMIN']
         devices:
             - /dev/net/tun
         environment:
-            - ZBX_HOSTNAME=bp-aws.docker.prx.v.globalcare
+            - ZBX_HOSTNAME=nomehost
             - ZBX_SERVER_HOST=bhs3-zbx-p01
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
@@ -31,7 +31,7 @@ services:
             - ZBX_VMWARETIMEOUT=10
             - TNS_ADMIN=/usr/lib/oracle/12.1/client64/network/admin
             - ZBX_TLSCONNECT=psk
-            - ZBX_TLSPSKIDENTITY=bp-aws.docker.prx.v.globalcare
+            - ZBX_TLSPSKIDENTITY=nomehost
             - ZBX_TLSPSKFILE=tls.psk
         volumes:
 ###         - /opt/openvpn:/opt/openvpn
@@ -43,10 +43,13 @@ services:
             - /etc/localtime:/etc/localtime:ro
             - /etc/hosts:/etc/hosts
             #- /opt/globalcare/scripts/zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
+
+
+            
         restart: always
         networks:
            zbx-network:
-              ipv4_address: 172.25.0.100
+              ipv4_address: ip
 networks:
   zbx-network:
     ipam:
