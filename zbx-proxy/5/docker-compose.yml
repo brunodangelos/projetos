@@ -8,7 +8,7 @@ services:
             - 10051:10051
         cap_add: ['NET_ADMIN']
         devices:
-            - /dev/net/tun
+            - /dev/net/tun1
         environment:
             - ZBX_HOSTNAME=nomehost
             - ZBX_SERVER_HOST=bhs3-zbx-p01
@@ -45,7 +45,7 @@ services:
             #- /opt/globalcare/scripts/zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
 
 
-            
+
         restart: always
         networks:
            zbx-network:
