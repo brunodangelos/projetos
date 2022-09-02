@@ -1,0 +1,55 @@
+version: "5.0"
+services:
+    zabbix-proxy-v5:
+        image: globalcare:5.0
+        container_name: proxy
+        hostname: proxy
+        ports:
+            - 10051:10051
+        cap_add: ['NET_ADMIN']
+        environment:
+            - ZBX_HOSTNAME=teste-docker.homologacao
+            - ZBX_SERVER_HOST=bhs3-zbx-p01
+            - ZBX_DEBUGLEVEL=3
+            - ZBX_TIMEOUT=30
+            - ZBX_PROXYLOCALBUFFER=1
+            - ZBX_PROXYOFFLINEBUFFER=2
+            - ZBX_CONFIGFREQUENCY=600
+            - ZBX_STARTPOLLERS=15
+            - ZBX_STARTPOLLERSUNREACHABLE=5
+            - ZBX_STARTTRAPPERS=15
+            - ZBX_STARTPINGERS=2
+            - ZBX_CACHESIZE=16M
+            - ZBX_HISTORYCACHESIZE=32M
+            - ZBX_HISTORYINDEXCACHESIZE=8M
+            - ZBX_STARTVMWARECOLLECTORS=1
+            - ZBX_VMWAREFREQUENCY=60
+            - ZBX_VMWAREPERFFREQUENCY=60
+            - ZBX_VMWARECACHESIZE=8M
+            - ZBX_VMWARETIMEOUT=10
+            #- TNS_ADMIN=/usr/lib/oracle/12.1/client64/network/admin
+            - ZBX_ENABLEREMOTECOMMANDS=1
+            #- ZBX_TLSCONNECT=psk
+            #- ZBX_TLSPSKIDENTITY=nomehost
+            #- ZBX_TLSPSKFILE=tls.psk
+        #volumes:
+###         - /opt/openvpn:/opt/openvpn
+            #- /opt/globalcare/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+###         - /opt/globalcare/tnsnames.ora:/usr/lib/oracle/12.1/client64/network/admin/tnsnames.ora
+            #- /opt/globalcare/tls.psk:/var/lib/zabbix/enc/tls.psk
+            #- /etc/odbc.ini:/etc/odbc.ini
+            #- /etc/timezone:/etc/timezone:ro
+            #- /etc/localtime:/etc/localtime:ro
+            #- /etc/hosts:/etc/hosts
+            #- /opt/globalcare/scripts/zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
+
+        restart: always
+ #       networks:
+ #          zbx-network:
+ #             ipv4_address: 172.25.0.100
+#networks:
+#  zbx-network:
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 172.25.0.0/24
