@@ -8,6 +8,7 @@ services:
             - 10051:10051
         cap_add: ['NET_ADMIN']
         environment:
+            - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:$LD_LIBRARY_PATH
             - ZBX_HOSTNAME=teste-docker.homologacao
             - ZBX_SERVER_HOST=bhs3-zbx-p01
             - ZBX_DEBUGLEVEL=3
@@ -32,24 +33,23 @@ services:
             #- ZBX_TLSCONNECT=psk
             #- ZBX_TLSPSKIDENTITY=nomehost
             #- ZBX_TLSPSKFILE=tls.psk
-        #volumes:
-###         - /opt/openvpn:/opt/openvpn
+        volumes:
             #- /opt/globalcare/scripts/externalscripts:/usr/lib/zabbix/externalscripts
 ###         - /opt/globalcare/tnsnames.ora:/usr/lib/oracle/12.1/client64/network/admin/tnsnames.ora
             #- /opt/globalcare/tls.psk:/var/lib/zabbix/enc/tls.psk
             #- /etc/odbc.ini:/etc/odbc.ini
             #- /etc/timezone:/etc/timezone:ro
-            #- /etc/localtime:/etc/localtime:ro
+            - /etc/localtime:/etc/localtime:ro
             #- /etc/hosts:/etc/hosts
             #- /opt/globalcare/scripts/zabbix_agent2.conf:/etc/zabbix/zabbix_agent2.conf
 
         restart: always
- #       networks:
- #          zbx-network:
- #             ipv4_address: 172.25.0.100
-#networks:
-#  zbx-network:
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 172.25.0.0/24
+        networks:
+          zbx-network:
+              ipv4_address: 172.25.0.100
+networks:
+  zbx-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24

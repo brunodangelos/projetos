@@ -25,10 +25,12 @@ RUN mkdir /opt/oracle
 ADD https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip /tmp
 ADD https://download.oracle.com/otn_software/linux/instantclient/instantclient-odbc-linuxx64.zip /tmp
 RUN unzip /tmp/instantclient-basic-linuxx64.zip -d /opt/oracle \
-&& unzip /tmp/instantclient-odbc-linuxx64.zip -d /opt/oracle
-RUN sh -c 'cd /opt/oracle/instantclient_21_6; ./odbc_update_ini.sh /.'
-RUN sh -c "echo /opt/oracle/instantclient_21_6 > /etc/ld.so.conf.d/oracle-instantclient.conf"
-RUN ldconfig
+&& unzip /tmp/instantclient-odbc-linuxx64.zip -d /opt/oracle \
+&& rm /tmp/instantclient* \
+&& sh -c 'cd /opt/oracle/instantclient_21_6; ./odbc_update_ini.sh /.' \
+&& sh -c "echo /opt/oracle/instantclient_21_6 > /etc/ld.so.conf.d/oracle-instantclient.conf" \
+&& ldconfig
+
 # RUN wget https://download.oracle.com/otn_software/linux/instantclient/1916000/oracle-instantclient19.16-basiclite-19.16.0.0.0-1.x86_64.rpm
 # RUN alien -i oracle-instantclient19.16-basiclite-19.16.0.0.0-1.x86_64.rpm 
 # RUN sh -c 'echo /usr/lib/oracle/19.16/client64/lib/ > /etc/ld.so.conf.d/oracle.conf'
@@ -37,27 +39,48 @@ RUN ldconfig
 
 
 RUN echo "\
-[DSN]\n\
+[SQL]\n\
 Driver=ODBC Driver 17 for SQL Server \n\
-Description=Descritor de conexao SQLServer \n\
+Description=ODBC Drvier 17 SQLServer DSN \n\
 Pooling = No \n\
 Trace=Yes \n\
 Encrypt=No \n\
-Server=tcp:ip\instancia,1433 \n\
+Server=tcp:<ip>\<intance>,1433 \n\
 Database=master \n\
-\n[DSN] \n\
+\n[ORACLE] \n\
 Driver = Oracle 21 ODBC driver \n\
 DSN = Oracle 21 ODBC driver \n\
-ServerName = //ip:1521/instancia \n\
-\n[DSN] \n\
+ServerName = //<ip>:1521/<instance> \n\
+\n[MYSQL] \n\
 Description     = MySQL \n\
 Driver          = MySQL ODBC 8.0 Driver \n\
-Server          = ip \n\
-User            = usuario \n\
-Password        = senha \n\
-Database        = banco" >> /etc/odbc.ini 
-
-
+Server          = <ip> \n\
+User            = <username> \n\
+Password        = <password> \n\
+Database        = <databasename>\n\
+\n[POSTGRE]\n\
+Description = PostgreSQL DSN\n\
+Driver  = PostgreSQL Unicode\n\
+Username = <username>\n\
+Password = <password>\n\
+Servername = <ip>\n\
+Database = <databasename>\n\
+Port = 5432\n\
+ReadOnly = Yes\n\
+# PostgreSQL backend protocol\n\
+# 7.4+: Use the 7.4(V3) protocol. This is only compatible with 7.4 and higher backends.\n\
+Protocol = 7.4+\n\
+ShowOidColumn = No\n\
+FakeOidIndex  = No\n\
+RowVersioning = No\n\
+ShowSystemTables = No\n\
+Fetch = Yes\n\
+# Bools are mapped to SQL_CHAR, otherwise to SQL_BIT.\n\
+BoolsAsChar = Yes\n\
+# SSL mode\n\
+#SSLmode = Yes\n\
+# Send tobackend on connection\n\
+ConnSettings =" >> /etc/odbc.ini
 
 
 
