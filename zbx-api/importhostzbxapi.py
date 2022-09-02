@@ -2,14 +2,14 @@ from pyzabbix import ZabbixAPI
 import csv
 from progressbar import ProgressBar, Percentage, ETA, ReverseBar, RotatingMarker, Timer
 
-zapi = ZabbixAPI("http://192.168.52.115/")
-zapi.login(user="Admin", password="zabbix")
+zapi = ZabbixAPI("http://1.1.1.1/")
+zapi.login(user="", password="")
 
-arq = csv.reader(open('/mnt/c/Users/bds/Desktop/ZBX API/serverbp.csv'))
+arq = csv.reader(open('$DIRETORIO'))
 
 linhas = sum(1 for linha in arq)
 
-f = csv.reader(open('/mnt/c/Users/bds/Desktop/ZBX API/serverbp.csv'), delimiter=';')
+f = csv.reader(open('$DIRETORIO'), delimiter=';')
 bar = ProgressBar(maxval=linhas,widgets=[Percentage(), ReverseBar(), ETA(), RotatingMarker(), Timer()]).start()
 i = 0
 
