@@ -8,12 +8,17 @@ services:
   mysql:
     container_name: mysql
     image: mysql:8.0
+    command:
+      - mysqld
+      - --character-set-server=utf8
+      - --collation-server=utf8_bin
+      - --default-authentication-plugin=mysql_native_password
     networks:
       - network-zabbix
     ports:
       - '3306:3306'
     volumes:
-      - './zabbix/mysql:/var/lib/data'
+      - './zabbix/mysql:/var/lib/data' 
     environment:
       - MYSQL_ROOT_PASSWORD=globalcare
       - MYSQL_DATABASE=zabbix
@@ -22,7 +27,7 @@ services:
 
   zabbix-server:
     container_name: zabbix-server
-    image: zabbix/zabbix-server-mysql:ubuntu-6.0.1
+    image: zabbix/zabbix-server-mysql:alpine-6.0.0
     networks:
       - network-zabbix
     links:
@@ -42,11 +47,12 @@ services:
 
   zabbix-frontend:
     container_name: zabbix-frontend
-    image: zabbix/zabbix-web-apache-mysql:ubuntu-6.0.1
+    image: zabbix/zabbix-web-apache-mysql:alpine-6.0.0
     networks:
       - network-zabbix
     links:
       - mysql
+      - zabbix-server
     restart: always
     ports:
       - '80:8080'
@@ -57,6 +63,7 @@ services:
       - MYSQL_USER=zabbix
       - MYSQL_PASSWORD=globalcare
       - PHP_TZ=America/Sao_Paulo
+      - ZBX_SERVER_HOST=zabbix-server
     depends_on:
       - mysql
    
@@ -78,7 +85,7 @@ services:
       - zabbix-server
   zabbix-agent:
     container_name: zabbix-agent
-    image: zabbix/zabbix-agent2:alpine-6.0.1
+    image: zabbix/zabbix-agent2:alpine-6.0.0
     user: root
     networks:
       - network-zabbix
