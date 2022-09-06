@@ -91,6 +91,7 @@ services:
       - network-zabbix
     links:
       - zabbix-server
+      - zabbix-frontend
     restart: always
     privileged: true
     volumes:
@@ -99,4 +100,4 @@ services:
       - '10050:10050'
     environment:
       - ZBX_HOSTNAME=Zabbix server
-      - ZBX_SERVER_HOST=172.18.0.1
+      - ZBX_SERVER_HOST=zabbix-server
