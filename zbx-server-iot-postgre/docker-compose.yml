@@ -6,7 +6,6 @@ networks:
 
 services:
   timescaledb:
-    platform: linux/amd64
     container_name: pgsql
     image: timescale/timescaledb:latest-pg14
     restart: always

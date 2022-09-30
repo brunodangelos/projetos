@@ -1,0 +1,86 @@
+***************Commands***************
+__create folder docker
+mkdir docker
+__open folder docker
+cd docker
+__create folder mqtt
+mkdir mqtt
+__open folder mqtt
+cd mqtt
+
+__create file docker-compose.yml
+cd mqtt
+sudo nano docker-compose.yml
+___copy and paste into the file
+#------------------------------------------
+version: '2'
+
+services:
+##Mosquitto
+  mqtt:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0.11
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - /home/pi/docker/mqtt/config:/mosquitto/config
+      - /home/pi/docker/mqtt/data:/mosquitto/data
+      - /home/pi/docker/mqtt/log:/mosquitto/log
+volumes:
+  config:
+  data:
+  log:
+#------------------------------------------
+__create container mqtt
+docker-compose up -d
+
+__open folder config
+cd config
+__create file mosquitto.conf
+sudo nano mosquitto.conf
+__copy and paste into the file
+#------------------------------------------
+persistence true
+persistence_location /mosquitto/data/
+log_dest file /mosquitto/log/mosquitto.log
+#------------------------------------------
+
+__check container is in run
+docker ps
+__open the container shell
+docker exec -it (Number ID container??) sh
+___add a user to  a new password file
+mosquitto_passwd -c /mosquitto/config/mosquitto.passwd guest
+exit
+
+__open file mosquitto.conf
+sudo nano mosquitto.conf
+___copy and paste into the file
+#------------------------------------------
+persistence true
+persistence_location /mosquitto/data/
+log_dest file /mosquitto/log/mosquitto.log
+
+password_file /mosquitto/config/mosquitto.passwd
+allow_anonymous false
+
+listener 1883
+listener 9001
+protocol websockets
+#------------------------------------------
+
+
+***********Directory structure***********
+|--docker
+  |--mqtt
+    |--docker-compose.yml
+    |--config
+      |--mosquitto.conf
+      |--mosquitto.passwd
+    |--data
+    |--log
+
+#Criar usuário
+docker exec -it mosquitto /bin/sh -c "mosquitto_passwd -c /mosquitto/config/mosquitto.passwd maike"
