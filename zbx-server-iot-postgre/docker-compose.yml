@@ -6,8 +6,9 @@ networks:
 
 services:
   timescaledb:
+    platform: linux/amd64
     container_name: pgsql
-    image: timescale/timescaledb-ha:pg14-latest
+    image: timescale/timescaledb:latest-pg14
     restart: always
     ports:
       - 5432:5432
@@ -57,6 +58,8 @@ services:
     links:
       - timescaledb
     restart: always
+    ports:
+      - '10052:10051'
     volumes:
       - './zabbix/alertscripts:/usr/lib/zabbix/alertscripts'
     environment:
@@ -103,6 +106,7 @@ services:
       - timescaledb
       - zabbix-server
       - zabbix-server2
+      - zabbix-frontend
     restart: always
     ports:
       - '3000:3000'
