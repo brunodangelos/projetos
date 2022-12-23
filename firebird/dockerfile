@@ -1,0 +1,10 @@
+FROM ubuntu:20.04
+USER root
+
+apt-get install software-properties-common
+
+ADD https://github.com/FirebirdSQL/firebird/releases/download/R2_5_9/FirebirdSS-2.5.9.27139-0.amd64.tar.gz /tmp
+RUN apt install -y libstdc++5 libncurses5 libtommath1 \
+&& tar -xzvf /FirebirdSS-2.5.9.27139-0.amd64.tar.gz -C /tmp \
+&& sh -C '/tmp/FirebirdSS-2.5.9.27139-0.amd64/install.sh'
+RUN ln -s /opt/firebird/lib/libfbclient.so.2.5.9 /usr/lib/libfbclient.so.2.5.1
