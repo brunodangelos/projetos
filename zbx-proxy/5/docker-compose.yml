@@ -10,7 +10,7 @@ services:
         environment:
             - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:$LD_LIBRARY_PATH
             - ZBX_HOSTNAME=teste-docker.homologacao
-            - ZBX_SERVER_HOST=bhs3-zbx-p01
+            - ZBX_SERVER_HOST=servidorzabbix
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
             - ZBX_PROXYLOCALBUFFER=1
