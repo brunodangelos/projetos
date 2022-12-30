@@ -9,7 +9,7 @@ services:
         cap_add: ['NET_ADMIN']
         environment:
             - ZBX_HOSTNAME=teste-docker.homologacao
-            - ZBX_SERVER_HOST=noc.globalcare.inf.br
+            - ZBX_SERVER_HOST=serverzabbix
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
             - ZBX_PROXYLOCALBUFFER=1
