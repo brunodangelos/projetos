@@ -1,7 +1,7 @@
 version: "4.0"
 services:
     zabbix-proxy-v4:
-        image: dockerglobalcare/globalcare:v4
+        image: image
         container_name: proxy
         hostname: proxy
         ports:
@@ -9,7 +9,7 @@ services:
         cap_add: ['NET_ADMIN']
         environment:
             - ZBX_HOSTNAME=nomehost
-            - ZBX_SERVER_HOST=bhs3-zbx-p01
+            - ZBX_SERVER_HOST=zabbixserver
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
             - ZBX_PROXYLOCALBUFFER=1
