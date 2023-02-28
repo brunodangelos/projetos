@@ -27,7 +27,7 @@ services:
 
   zabbix-server:
     container_name: zabbix-node01
-    image: zabbix/zabbix-server-pgsql:alpine-6.2.0
+    image: zabbix/zabbix-server-pgsql:alpine-6.2-latest
     networks:
       - network-zabbix
     links:
@@ -43,6 +43,18 @@ services:
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=zabbix
       - ZBX_SERVER_NAME=zsrv
+      - ZBX_STARTPOLLERS=30
+      - ZBX_STARTPOLLERSUNREACHABLE=15
+      - ZBX_STARTTRAPPERS=20
+      - ZBX_STARTPINGERS=15
+      - ZBX_CACHESIZE=128M
+      - ZBX_HISTORYCACHESIZE=32M
+      - ZBX_HISTORYINDEXCACHESIZE=16M
+      - ZBX_STARTVMWARECOLLECTORS=1
+      - ZBX_VMWAREFREQUENCY=60
+      - ZBX_VMWAREPERFFREQUENCY=60
+      - ZBX_VMWARECACHESIZE=16M
+      - ZBX_VMWARETIMEOUT=10 
       - ENABLE_TIMESCALEDB=true
       - ZBX_HANODENAME=zabbix-node01
       - ZBX_NODEADDRESS=zabbix-node01:10051
@@ -51,7 +63,7 @@ services:
 
   zabbix-frontend:
     container_name: zabbix-frontend
-    image: zabbix/zabbix-web-apache-pgsql:alpine-6.2.0
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-6.2-latest
     networks:
       - network-zabbix
     links:
@@ -94,10 +106,13 @@ services:
       - timescaledb
       - zabbix-server
       #- zabbix-server2
+    volumes:
+      - /data/grafana:/var/lib/grafana
+      #  - /data/custom/grafana.db:/var/lib/grafana/grafana.db
 
   zabbix-agent:
     container_name: zabbix-agent
-    image: zabbix/zabbix-agent2:alpine-6.2.0
+    image: zabbix/zabbix-agent2:alpine-6.2-latest
     user: root
     networks:
       - network-zabbix
