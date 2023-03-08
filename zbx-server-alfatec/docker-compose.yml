@@ -7,7 +7,7 @@ networks:
 services:
   timescaledb:
     container_name: pgsql
-    image: timescale/timescaledb:latest-pg14
+    image: timescale/timescaledb:2.9.3-pg14
     restart: always
     ports:
       - 5432:5432
@@ -27,7 +27,7 @@ services:
 
   zabbix-server:
     container_name: zabbix-node01
-    image: zabbix/zabbix-server-pgsql:alpine-6.2-latest
+    image: zabbix/zabbix-server-pgsql:alpine-6.2.7
     networks:
       - network-zabbix
     links:
@@ -63,7 +63,7 @@ services:
 
   zabbix-frontend:
     container_name: zabbix-frontend
-    image: zabbix/zabbix-web-nginx-pgsql:alpine-6.2-latest
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-6.2.7
     networks:
       - network-zabbix
     links:
@@ -112,7 +112,7 @@ services:
 
   zabbix-agent:
     container_name: zabbix-agent
-    image: zabbix/zabbix-agent2:alpine-6.2-latest
+    image: zabbix/zabbix-agent2:alpine-6.2.7
     user: root
     networks:
       - network-zabbix
