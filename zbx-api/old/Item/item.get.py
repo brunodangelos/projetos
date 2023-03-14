@@ -4,7 +4,7 @@ from zabbix_api import ZabbixAPI
 import csv
 from progressbar import ProgressBar, Percentage, ETA, ReverseBar, RotatingMarker, Timer
 import threading
-from Connection import LoginZabbix
+import Connection
 
 LoginZabbix()
 

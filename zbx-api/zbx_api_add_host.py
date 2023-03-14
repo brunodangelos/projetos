@@ -2,9 +2,9 @@ from zabbix_api import ZabbixAPI
 import csv 
 import time
 
-URL='localhost'
-USERNAME='zbx'
-PASSWORD='zbx'
+URL=''
+USERNAME='Admin'
+PASSWORD='zabbix'
 
 def VersaoZabbix():
     try:
@@ -20,41 +20,26 @@ try:
 except Exception as err:
     print(f'Problema na conexão erro {err}')
 
-groupids = ['1178']
+groupids = ['22']
 groups = [{"groupid": groupid} for groupid in groupids]
 
 info_interfaces= {
-    "1": {"type": "SNMP", "id": "2", "port": "161"},
+    "1": {"type": "Agent", "id": "1", "port": "10050"},
     "2": {"type":  "SNMP", "id": "2", "port": "161"}
 }
 
-def Create_Host(unidade,host,description,tag_name,tag_value,ip):
+def Create_Host(host,ip):
     try:
         create_host = zapi.host.create ({
             "groups" : groups,
             "host": host,
-            "description": description,
-            "inventory_mode": 0,
-            "inventory": {
-                "contact": "a@a.com",
-                "site_city": unidade
-            },
             "interfaces" : {
                 "type": info_interfaces['1']['id'],
                 "main": 1,
-                "useip": 1,
-                "ip": ip,
-                "dns": "",
-                "port": info_interfaces['1']['port'],
-                "details": {
-                    "version": 2,
-                    "bulk": 1,
-                    "community": "{$SNMP_COMMUNITY}"
-                }       
-            },
-            "tags" : {
-                "tag": tag_name,
-                "value": tag_value
+                "useip": 0, # --- 0 - Monitora por DNS e 1 - Monitora por IP
+                "ip": "",
+                "dns": ip,
+                "port": info_interfaces['1']['port'],      
             }
         })
         print(f'Host {host}, cadastrado com sucesso!')
@@ -62,10 +47,10 @@ def Create_Host(unidade,host,description,tag_name,tag_value,ip):
         print(f'Falha ao cadastrar o host: erro {err}')
 
 start_time = time.time()
-with open('file') as file:
+with open('C:/data/website.csv') as file:
     file_csv = csv.reader(file, delimiter=';')
-    for [uni,hostname,desc,tagname,tagvalue,ip] in file_csv:
-        Create_Host(unidade=uni,host=hostname,description=desc,tag_name=tagname,tag_value=tagvalue,ip=ip)
+    for [hostname,ip] in file_csv:
+        Create_Host(host=hostname,ip=ip)
 end_time=time.time()
 total_time = (end_time-start_time)*1000
 print(f'Total time = {total_time:.2f} ms')

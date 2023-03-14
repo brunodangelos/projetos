@@ -1,13 +1,35 @@
 from zabbix_api import ZabbixAPI
 import csv
-from progressbar import ProgressBar, Percentage, ETA, ReverseBar, RotatingMarker, Timer
+from Connection import LoginZabbix
+import getpass
 
-VersaoZabbix()
+def VersaoZabbix():
+    try:
+        return zapi.api_version()
+    except Exception as err:
+        print(f'Falha ao conectar na API do zabbix, erro: {err}')
+        zapi.logout()
+
+
+zabbix_url = 'https://'+input('Insira a url do zabbix: ') +'/api_jsonrpc.php'     # Set the Zabbix API URL
+user = input("Insira o usuário: ") # Set the authentication user
+password = getpass.getpass("Insira sua senha: ") # Set the authentication password
+try:
+    zapi = ZabbixAPI(zabbix_url, timeout=1800)
+    zapi.login(user,password)
+    print(f'Conectado ao Zabbix URL: {zabbix_url}, versão atual: {VersaoZabbix()}')
+except Exception as err:
+    print(f'Problema na conexão erro {err}')
+    zapi.logout()
+
+
+
+arquivocsv='servicos.csv'
 
 def BuscarHostCSV(hostname):
     #hostname = input("Insira o nome do host (Caso não coloque nenhum valor buscará todos): ")
     #print("\n")
-    with open('servicos.csv','r', newline='',encoding='utf-8') as f:
+    with open(arquivocsv,'r', newline='',encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
         for row in reader:
             try:
@@ -66,19 +88,20 @@ def BuscarTriggerid(nometrigger, hostid):
         return trigger_search_result[0]['triggerid']
     except Exception as e:
         print("Erro ao localizar trigger :",e)
+        zapi.logout()
 
 def AddService():
     # Abra o arquivo CSV e leia os dados
-    with open('servicos.csv','r', newline='',encoding='utf-8') as f:
+    with open(arquivocsv,'r', newline='',encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
         # Use tqdm para exibir uma barra de progresso
         for row in reader:
-                hostname = row['host']
+                #hostname = row['host']
                 svcname = row['nome_servico'] 
                 # Obtenha os parâmetros do serviço do arquivo CSV
-                host = BuscarHostCSV(hostname)
+                host = BuscarHostCSV(row['host'])
                 svchostname = host[0]['name']
-                service_name = "Teste - " + svcname + " - " + svchostname
+                service_name = "BPBUNGE - APP PIMS - " + svcname + " - " + svchostname
                 service_triggerid = BuscarTriggerid(svcname, host[0]['hostid'])
                 #service_algorithm_type = row['tipo_algoritmo']
                 #service_algorithm_expression = row['expressao_algoritmo']
@@ -88,7 +111,7 @@ def AddService():
                     'name': service_name,
                     'algorithm': 1,
                     'showsla': 1,
-                    'goodsla': 98.00,
+                    'goodsla': 99.00,
                     'sortorder': 1,
                     'triggerid': service_triggerid,
                     #'hostid': service_hostid
@@ -101,10 +124,12 @@ def AddService():
                         print(f"O serviço '{service_name}' foi criado com sucesso. ID do serviço: {service_result['serviceids'][0]}")
                     else:
                         print(f"Falha ao criar o serviço '{service_name}'. Erro: {service_result['error']['data']}")
+                        zapi.logout()
 
                 except Exception as e:
                     print(f"Ocorreu um erro durante o processo: {e}")
+                    zapi.logout()
 AddService()
 
-#trigger = BuscarTriggerid("ADHDVRDriverService", 17608)
-#print(trigger)
+"""trigger = BuscarTriggerid("Servidor: {HOST.NAME} foi reiniciado (uptime menor que {$UPTIME} )", 16631)
+print(trigger)"""
