@@ -1,7 +1,7 @@
 FROM zabbix/zabbix-proxy-sqlite3:ubuntu-5.0-latest
 USER root
 RUN apt update
-RUN apt install unzip curl wget gnupg2 libaio1 tdsodbc libgtk2.0-0 libgtk-3-0 snmp snmp-mibs-downloader -y
+RUN apt install unzip curl wget gnupg2 libaio1 tdsodbc libgtk2.0-0 libgtk-3-0 snmp snmp-mibs-downloader telnet -y
 
 #SNMP MIBs
 RUN echo mibs +ALL >> /etc/snmp/snmp.conf && wget http://pastebin.com/raw.php?i=p3QyuXzZ -O /usr/share/snmp/mibs/ietf/SNMPv2-PDU
