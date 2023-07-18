@@ -4,12 +4,9 @@ services:
         image: zabbix/zabbix-proxy-sqlite3:6.0.19-alpine
         container_name: proxy
         hostname: proxy
-        ports:
-            - 10051:10051
-        #cap_add: ['NET_ADMIN']
         environment:
-            - ZBX_HOSTNAME=servidor
-            - ZBX_SERVER_HOST=servidorzabbix
+            - ZBX_HOSTNAME=<hostname>
+            - ZBX_SERVER_HOST=zabbix
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
             - ZBX_PROXYLOCALBUFFER=1
@@ -29,33 +26,27 @@ services:
             - ZBX_VMWARETIMEOUT=10
             - ZBX_ENABLEREMOTECOMMANDS=1
             - ZBX_TLSCONNECT=psk
-            - ZBX_TLSPSKIDENTITY=nomehost
+            - ZBX_TLSPSKIDENTITY=<hostname>
             - ZBX_TLSPSKFILE=tls.psk
         volumes:
-            - /opt/cmp/scripts/externalscripts:/usr/lib/zabbix/externalscripts
-            - /opt/cmp/tls.psk:/var/lib/zabbix/enc/tls.psk
+            - /opt/compmon/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+            - /opt/compmon/tls.psk:/var/lib/zabbix/enc/tls.psk
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
             - /etc/hosts:/etc/hosts
         restart: always
-        networks:
-          zbx-network:
+        network_mode: host
+
     zabbix-agent:
         container_name: zabbix-agent
         hostname: proxy
         image: zabbix/zabbix-agent:6.0.19-alpine
         user: root
-        networks:
-          - zbx-network
+        network_mode: host
         restart: always
         privileged: true
         volumes:
           - /var/run:/var/run
-        ports:
-          - '10050:10050'
         environment:
-          - ZBX_HOSTNAME=srvzproxy
-          - ZBX_SERVER_HOST=proxy
-networks:
-  zbx-network:
-      driver: bridge
+          - ZBX_HOSTNAME=<hostname>
+          - ZBX_SERVER_HOST=<ip>
