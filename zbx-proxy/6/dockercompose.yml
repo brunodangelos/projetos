@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+    zabbix-proxy:
+        image: zabbix/zabbix-proxy-sqlite3:6.0.19-alpine
+        container_name: proxy
+        hostname: proxy
+        ports:
+            - 10051:10051
+        cap_add: ['NET_ADMIN']
+        environment:
+            - ZBX_HOSTNAME=servidor
+            - ZBX_SERVER_HOST=servidorzabbix
+            - ZBX_DEBUGLEVEL=3
+            - ZBX_TIMEOUT=30
+            - ZBX_PROXYLOCALBUFFER=1
+            - ZBX_PROXYOFFLINEBUFFER=2
+            - ZBX_CONFIGFREQUENCY=600
+            - ZBX_STARTPOLLERS=15
+            - ZBX_STARTPOLLERSUNREACHABLE=5
+            - ZBX_STARTTRAPPERS=15
+            - ZBX_STARTPINGERS=2
+            - ZBX_CACHESIZE=16M
+            - ZBX_HISTORYCACHESIZE=32M
+            - ZBX_HISTORYINDEXCACHESIZE=8M
+            - ZBX_STARTVMWARECOLLECTORS=1
+            - ZBX_VMWAREFREQUENCY=60
+            - ZBX_VMWAREPERFFREQUENCY=60
+            - ZBX_VMWARECACHESIZE=8M
+            - ZBX_VMWARETIMEOUT=10
+            - ZBX_ENABLEREMOTECOMMANDS=1
+            - ZBX_TLSCONNECT=psk
+            - ZBX_TLSPSKIDENTITY=nomehost
+            - ZBX_TLSPSKFILE=tls.psk
+        volumes:
+            - /opt/cmp/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+            - /opt/cmp/tls.psk:/var/lib/zabbix/enc/tls.psk
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+            - /etc/hosts:/etc/hosts
+        restart: always
+        networks:
+          zbx-network:
+              ipv4_address: 172.25.0.100
+networks:
+  zbx-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24
