@@ -29,8 +29,8 @@ services:
             - ZBX_TLSPSKIDENTITY=<hostname>
             - ZBX_TLSPSKFILE=tls.psk
         volumes:
-            - /opt/compmon/scripts/externalscripts:/usr/lib/zabbix/externalscripts
-            - /opt/compmon/tls.psk:/var/lib/zabbix/enc/tls.psk
+            - /opt/com/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+            - /opt/com/tls.psk:/var/lib/zabbix/enc/tls.psk
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
             - /etc/hosts:/etc/hosts
