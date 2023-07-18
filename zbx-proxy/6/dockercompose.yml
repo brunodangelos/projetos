@@ -6,7 +6,7 @@ services:
         hostname: proxy
         ports:
             - 10051:10051
-        cap_add: ['NET_ADMIN']
+        #cap_add: ['NET_ADMIN']
         environment:
             - ZBX_HOSTNAME=servidor
             - ZBX_SERVER_HOST=servidorzabbix
@@ -40,10 +40,22 @@ services:
         restart: always
         networks:
           zbx-network:
-              ipv4_address: 172.25.0.100
+    zabbix-agent:
+        container_name: zabbix-agent
+        hostname: proxy
+        image: zabbix/zabbix-agent:6.0.19-alpine
+        user: root
+        networks:
+          - zbx-network
+        restart: always
+        privileged: true
+        volumes:
+          - /var/run:/var/run
+        ports:
+          - '10050:10050'
+        environment:
+          - ZBX_HOSTNAME=srvzproxy
+          - ZBX_SERVER_HOST=proxy
 networks:
   zbx-network:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.25.0.0/24
+      driver: bridge
