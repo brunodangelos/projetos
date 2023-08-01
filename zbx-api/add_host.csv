@@ -1,0 +1,2 @@
+hostgroup;hostname;ip;location;latitude;longitude;host_type
+grupo;hostname;ip;endereco;lat;long;snmp
