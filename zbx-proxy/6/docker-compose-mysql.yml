@@ -1,0 +1,76 @@
+version: "3.9"
+services:
+    zabbix-proxy:
+        image: zabbix/zabbix-proxy-mysql:6.0.19-alpine
+        container_name: <hostname>
+        hostname: <hostname>
+        environment:
+            - ZBX_HOSTNAME=<hostname>
+            - ZBX_SERVER_HOST=<zabbixserver>
+            - ZBX_DEBUGLEVEL=3
+            - ZBX_TIMEOUT=30
+            - ZBX_PROXYLOCALBUFFER=1
+            - ZBX_PROXYOFFLINEBUFFER=2
+            - ZBX_CONFIGFREQUENCY=600
+            - ZBX_STARTPOLLERS=15
+            - ZBX_STARTPOLLERSUNREACHABLE=5
+            - ZBX_STARTTRAPPERS=15
+            - ZBX_STARTPINGERS=2
+            - ZBX_CACHESIZE=16M
+            - ZBX_HISTORYCACHESIZE=32M
+            - ZBX_HISTORYINDEXCACHESIZE=8M
+            - ZBX_STARTVMWARECOLLECTORS=1
+            - ZBX_VMWAREFREQUENCY=60
+            - ZBX_VMWAREPERFFREQUENCY=60
+            - ZBX_VMWARECACHESIZE=8M
+            - ZBX_VMWARETIMEOUT=10
+            - ZBX_ENABLEREMOTECOMMANDS=1
+            - ZBX_TLSCONNECT=psk
+            - ZBX_TLSPSKIDENTITY=<hostname>
+            - ZBX_TLSPSKFILE=tls.psk
+            - DB_SERVER_HOST=127.0.0.1
+            - MYSQL_USER=${DBUSER}
+            - MYSQL_PASSWORD=${DBPASS}
+        volumes:
+            - /opt/c/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+            - /opt/c/tls.psk:/var/lib/zabbix/enc/tls.psk
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+            - /etc/hosts:/etc/hosts
+        restart: always
+        network_mode: host
+
+    mysql:
+      container_name: mysql
+      image: mysql:8.0
+      command:
+        - mysqld
+        - --character-set-server=utf8
+        - --collation-server=utf8_bin
+        - --default-authentication-plugin=caching_sha2_password
+        - --log_bin_trust_function_creators=1
+        - --host-cache-size=0
+      network_mode: host
+      volumes:
+        - /opt/compmon/mysql:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=${DBROOT}
+        - MYSQL_DATABASE=zabbix_proxy
+        - MYSQL_USER=${DBUSER}
+        - MYSQL_PASSWORD=${DBPASS}
+      depends_on:
+        - zabbix-proxy
+
+    zabbix-agent:
+        container_name: zabbix-agent
+        hostname: <hostname>
+        image: zabbix/zabbix-agent:6.0.19-alpine
+        user: root
+        network_mode: host
+        restart: always
+        privileged: true
+        volumes:
+          - /var/run:/var/run
+        environment:
+          - ZBX_HOSTNAME=<hostname>
+          - ZBX_SERVER_HOST=<ip>
