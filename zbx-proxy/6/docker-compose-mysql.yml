@@ -51,6 +51,7 @@ services:
         - --log_bin_trust_function_creators=1
         - --host-cache-size=0
       network_mode: host
+      restart: always      
       volumes:
         - /opt/compmon/mysql:/var/lib/mysql
       environment:
