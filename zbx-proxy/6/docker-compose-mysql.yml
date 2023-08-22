@@ -1,23 +1,23 @@
 version: "3.9"
 services:
     zabbix-proxy:
-        image: zabbix/zabbix-proxy-mysql:6.0.19-alpine
-        container_name: <hostname>
-        hostname: <hostname>
+        image: zabbix/zabbix-proxy-mysql:6.0.20-alpine
+        container_name: <nomecontainer>
+        hostname: <nomecontainer>
         environment:
-            - ZBX_HOSTNAME=<hostname>
+            - ZBX_HOSTNAME=<nomecontainer>
             - ZBX_SERVER_HOST=<zabbixserver>
             - ZBX_DEBUGLEVEL=3
             - ZBX_TIMEOUT=30
             - ZBX_PROXYLOCALBUFFER=1
             - ZBX_PROXYOFFLINEBUFFER=2
             - ZBX_CONFIGFREQUENCY=600
-            - ZBX_STARTPOLLERS=15
-            - ZBX_STARTPOLLERSUNREACHABLE=5
+            - ZBX_STARTPOLLERS=80
+            - ZBX_STARTPOLLERSUNREACHABLE=50
             - ZBX_STARTTRAPPERS=15
-            - ZBX_STARTPINGERS=2
-            - ZBX_CACHESIZE=16M
-            - ZBX_HISTORYCACHESIZE=32M
+            - ZBX_STARTPINGERS=30
+            - ZBX_CACHESIZE=512M
+            - ZBX_HISTORYCACHESIZE=64M
             - ZBX_HISTORYINDEXCACHESIZE=8M
             - ZBX_STARTVMWARECOLLECTORS=1
             - ZBX_VMWAREFREQUENCY=60
@@ -26,14 +26,14 @@ services:
             - ZBX_VMWARETIMEOUT=10
             - ZBX_ENABLEREMOTECOMMANDS=1
             - ZBX_TLSCONNECT=psk
-            - ZBX_TLSPSKIDENTITY=<hostname>
+            - ZBX_TLSPSKIDENTITY=<nomecontainer>
             - ZBX_TLSPSKFILE=tls.psk
             - DB_SERVER_HOST=127.0.0.1
             - MYSQL_USER=${DBUSER}
             - MYSQL_PASSWORD=${DBPASS}
         volumes:
-            - /opt/c/scripts/externalscripts:/usr/lib/zabbix/externalscripts
-            - /opt/c/tls.psk:/var/lib/zabbix/enc/tls.psk
+            - /opt/compmon/scripts/externalscripts:/usr/lib/zabbix/externalscripts
+            - /opt/compmon/tls.psk:/var/lib/zabbix/enc/tls.psk
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
             - /etc/hosts:/etc/hosts
@@ -50,8 +50,9 @@ services:
         - --default-authentication-plugin=caching_sha2_password
         - --log_bin_trust_function_creators=1
         - --host-cache-size=0
+        - --skip-log-bin
       network_mode: host
-      restart: always      
+      restart: always
       volumes:
         - /opt/compmon/mysql:/var/lib/mysql
       environment:
@@ -64,7 +65,7 @@ services:
 
     zabbix-agent:
         container_name: zabbix-agent
-        hostname: <hostname>
+        hostname: <nomecontainer>
         image: zabbix/zabbix-agent:6.0.19-alpine
         user: root
         network_mode: host
@@ -73,5 +74,5 @@ services:
         volumes:
           - /var/run:/var/run
         environment:
-          - ZBX_HOSTNAME=<hostname>
+          - ZBX_HOSTNAME=<nomecontainer>
           - ZBX_SERVER_HOST=<ip>
