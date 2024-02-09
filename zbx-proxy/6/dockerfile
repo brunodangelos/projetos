@@ -31,8 +31,8 @@ ADD https://download.oracle.com/otn_software/linux/instantclient/instantclient-b
 ADD https://download.oracle.com/otn_software/linux/instantclient/instantclient-odbc-linuxx64.zip /tmp
 RUN unzip /tmp/instantclient-basic-linuxx64.zip -d /opt/oracle/ \
 && unzip /tmp/instantclient-odbc-linuxx64.zip -d /opt/oracle/ \
-&& sh -c 'cd /opt/oracle/instantclient_21_8; ./odbc_update_ini.sh /.' \
-&& sh -c "echo /opt/oracle/instantclient_21_8 > /etc/ld.so.conf.d/oracle-instantclient.conf" \
+&& sh -c 'cd /opt/oracle/instantclient_21_13; ./odbc_update_ini.sh /.' \
+&& sh -c "echo /opt/oracle/instantclient_21_13 > /etc/ld.so.conf.d/oracle-instantclient.conf" \
 && ldconfig
 
 #REMOVER TEMP
